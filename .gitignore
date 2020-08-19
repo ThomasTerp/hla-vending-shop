@@ -1,0 +1,94 @@
+### Pre-emptive ignores
+
+*.code-workspace
+*.dll
+*.exe
+*.ico
+*.mdmp
+
+# Compiled content
+*.vpk
+*.los
+*.ain
+*.vmdl_c
+*.vmat_c
+*.vtex_c
+*.vsnd_c
+*.vsndevts_c
+*.vpcf_c
+*.vanmgrph_c
+*.vpost_c
+*.bin
+*.exr
+
+/content/*
+!/content/hlvr_addons/
+/content/hlvr_addons/*
+!/content/hlvr_addons/vending_shop
+/content/_toolsautosave
+/content/core
+/content/hlvr/
+/content/hlvr/*.dmx
+/content/hlvr_addons/**/_bakeresourcecache
+/content/hlvr_addons/**/_vrad3
+
+/game/*
+/game/*.txt
+/game/_toolsettings
+/game/bin/win64
+/game/bin/linuxsteamrt64
+!/game/hlvr_addons/
+
+# /game/hlvr_addons/
+/game/hlvr_addons/*
+!/game/hlvr_addons/vending_shop
+/game/hlvr_addons/**/_bakeresourcecache
+/game/hlvr_addons/**/_buildcubemaps
+/game/hlvr_addons/**/_vrad3
+/game/hlvr_addons/**/save/*
+/game/hlvr_addons/**/tools_thumbnail_cache.bin
+/game/hlvr_addons/hlvrcfg.cfg
+/game/hlvr_addons/vpks
+
+### Addons distributed with the tools
+### All users have these addons, they're readonly anyway so they shouldn't be tracked.
+
+/game/hlvr_addons/audio_new_sound
+/game/hlvr_addons/addon_template
+/game/hlvr_addons/custom_character
+/content/hlvr_addons/addon_template
+/content/hlvr_addons/audio_new_sound
+/content/hlvr_addons/custom_character
+
+### Per user ignores
+### Have multiple contributors to your map?
+### Need to ignore addons not relevant to the project?
+### This is where these go. Examples below.
+
+### fictional user A
+
+# /content/
+/content/hlvr_addons/soundtest
+
+# /game/
+/game/hlvr_addons/soundtest
+
+### fictional user B
+
+# /content/
+/content/hlvr_addons/animtest
+
+# /game/
+/game/hlvr_addons/animtest
+
+### fictional user C
+## he thought it would be a good idea to include some folders in his HLA install. He's an asshole.
+
+# /
+/.external
+/.extracted
+
+## Ignore the bakeresourcecache and vrad3 folders for all addons
+# /game/**/**/_bakeresourcecache
+# /game/**/**/_vrad3
+*.vsvg_c
