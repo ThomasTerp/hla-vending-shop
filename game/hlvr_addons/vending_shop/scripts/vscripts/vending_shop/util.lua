@@ -43,4 +43,22 @@ function util.RandomSeed()
 	return seed
 end
 
+function util.Trim(s)
+	return string.gsub(s, "^%s*(.-)%s*$", "%1")
+end
+
+--Convert a comma seperated string with equal signs into a table
+function util.StringDataToTable(input)
+	local output = {}
+	
+	for _, keyValue in pairs(vlua.split(input, ",")) do
+		keyValue = vlua.split(keyValue, "=")
+		keyValue[1] = util.Trim(keyValue[1])
+		keyValue[2] = util.Trim(keyValue[2])
+		output[keyValue[1]] = tonumber(keyValue[2]) or keyValue[2]
+	end
+	
+	return output
+end
+
 return util

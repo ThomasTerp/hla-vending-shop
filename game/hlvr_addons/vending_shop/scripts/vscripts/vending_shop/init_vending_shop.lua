@@ -61,7 +61,9 @@ thisEntity:SetThink(function()
 				},
 				{
 					startingCurrencyAmount = variables.startingCurrencyAmount,
-					slotConfig = slotConfig
+					slotConfig = slotConfig,
+					itemChances = util.StringDataToTable(variables.itemChances),
+					itemCosts = util.StringDataToTable(variables.itemCosts)
 				},
 				CurrencyDisplay(currencyDisplayLinks[variables.refundCurrencyDisplayIndex].currencyText),
 				slots

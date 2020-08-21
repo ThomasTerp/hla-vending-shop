@@ -14,39 +14,40 @@ local VendingShop = class(
 				amount = 5,
 				refundSpeed = 0.4
 			}
+			
 			self.items = {
-				["item_hlvr_clip_energygun"] = {
-					cost = 3,
+				item_hlvr_clip_energygun = {
+					cost = config.itemCosts.item_hlvr_clip_energygun,
 					offsetPosition = Vector(-0.8, -3.45, -3.7054),
 					offsetAngle = QAngle(-70.8897, 179.864, 177.606)
 				};
-				["item_hlvr_clip_energygun_multiple"] = {
-					cost = 10,
+				item_hlvr_clip_energygun_multiple = {
+					cost = config.itemCosts.item_hlvr_clip_energygun_multiple,
 					offsetPosition = Vector(-0.61, -3.36, -1.6149),
 					offsetAngle = QAngle(-89.8865, 86.6341, -87.4212)
 				};
-				["item_hlvr_clip_shotgun_multiple"] = {
-					cost = 6,
+				item_hlvr_clip_shotgun_multiple = {
+					cost = config.itemCosts.item_hlvr_clip_shotgun_multiple,
 					offsetPosition = Vector(-0.41, -3.56, -3.2453),
 					offsetAngle = QAngle(0.0013459, 358.914, 0.0123638)
 				};
-				["item_hlvr_clip_rapidfire"] = {
-					cost = 8,
+				item_hlvr_clip_rapidfire = {
+					cost = config.itemCosts.item_hlvr_clip_rapidfire,
 					offsetPosition = Vector(0.7, -4.22, -1.7546),
 					offsetAngle = QAngle(-3.18289, 6.42088, -92.4409)
 				};
-				["item_hlvr_grenade_frag"] = {
-					cost = 5,
+				item_hlvr_grenade_frag = {
+					cost = config.itemCosts.item_hlvr_grenade_frag,
 					offsetPosition = Vector(-0.2, -3.6, -1.4992),
 					offsetAngle = QAngle(-8.75917, 358.956, 0.825748)
 				};
-				["item_hlvr_grenade_xen"] = {
-					cost = 5,
+				item_hlvr_grenade_xen = {
+					cost = config.itemCosts.item_hlvr_grenade_xen,
 					offsetPosition = Vector(-0.2, -3.6, -1.4992),
 					offsetAngle = QAngle(0, 0, 0)
 				};
-				["item_healthvial"] = {
-					cost = 5,
+				item_healthvial = {
+					cost = config.itemCosts.item_healthvial,
 					offsetPosition = Vector(-4.02, -2.21, -2.9019),
 					offsetAngle = QAngle(36.9168, 268.969, -56.3617)
 				};
@@ -54,34 +55,33 @@ local VendingShop = class(
 			self.itemChanceTable = {
 				{
 					value = "item_hlvr_clip_energygun",
-					chance = 80
+					chance = config.itemChances.item_hlvr_clip_energygun
 				};
 				{
 					value = "item_hlvr_clip_energygun_multiple",
-					chance = 20
+					chance = config.itemChances.item_hlvr_clip_energygun_multiple
 				};
 				{
 					value = "item_hlvr_clip_shotgun_multiple",
-					chance = 100
+					chance = config.itemChances.item_hlvr_clip_shotgun_multiple
 				};
 				{
 					value = "item_hlvr_clip_rapidfire",
-					chance = 100
+					chance = config.itemChances.item_hlvr_clip_rapidfire
 				};
 				{
 					value = "item_hlvr_grenade_frag",
-					chance = 50
+					chance = config.itemChances.item_hlvr_grenade_frag
 				};
 				{
 					value = "item_hlvr_grenade_xen",
-					chance = 50
+					chance = config.itemChances.item_hlvr_grenade_xen
 				};
 				{
 					value = "item_healthvial",
-					chance = 100
+					chance = config.itemChances.item_healthvial
 				};
 			}
-			
 			self._scriptEntity = scriptEntity
 			self._largeRefundTargetEntity = entities.largeRefundTargetEntity
 			self._smallRefundTargetEntities = smallRefundTargetEntities
@@ -127,7 +127,6 @@ end
 --Activate the vending shop
 function VendingShop:Activate()
 	self._isActive = true
-	
 	self._currencyDisplay:Activate()
 	
 	for _, slot in ipairs(self:GetSlots()) do
@@ -139,7 +138,6 @@ end
 --Deactivate the vending shop
 function VendingShop:Deactivate()
 	self._isActive = false
-	
 	self._currencyDisplay:Deactivate()
 	
 	for _, slot in ipairs(self:GetSlots()) do
@@ -170,7 +168,12 @@ function VendingShop:SpawnItems()
 			})
 		end
 		
-		slot:SetCost(slotConfig.cost ~= -1 and slotConfig.cost or item.cost)
+		slot:SetCost(slotConfig.cost ~= -1 and slotConfig.cost or (item and item.cost) or 0)
+		
+		if classname == "none" and slotConfig.cost == -1 then
+			slot:SetBought(true)
+		end
+		
 		self:RefreshSlot(slot)
 	end
 end
@@ -264,33 +267,35 @@ function VendingShop:Refund()
 		self._isRefunding = true
 		
 		self:GetScriptEntity():SetThink(function()
-			local currency = self:GetCurrency()
-			
-			if currency >= self.largeCurrency.amount then
-				SpawnEntityFromTableSynchronous(self.largeCurrency.classname, {
-					origin = self._largeRefundTargetEntity:GetAbsOrigin(),
-					angles = RotateOrientation(self._largeRefundTargetEntity:GetAngles(), QAngle(0, math.random(0, 359), 0))
-				})
+			if self:IsActive() then
+				local currency = self:GetCurrency()
 				
-				self:AddCurrency(-self.largeCurrency.amount)
-				self:PlayRefundSound()
-				
-				return self.largeCurrency.refundSpeed
-			elseif currency > 0 then
-				self:AddCurrency(-self.smallCurrency.amount)
-				self:PlayRefundSound()
-				
-				local spawnTarget = self._smallRefundTargetEntities[math.random(#self._smallRefundTargetEntities)]
-				
-				SpawnEntityFromTableSynchronous(self.smallCurrency.classname, {
-					origin = spawnTarget:GetAbsOrigin(),
-					angles = RotateOrientation(spawnTarget:GetAngles(), QAngle(0, math.random(0, 359), 0))
-				})
-				
-				return self.smallCurrency.refundSpeed
+				if currency >= self.largeCurrency.amount then
+					SpawnEntityFromTableSynchronous(self.largeCurrency.classname, {
+						origin = self._largeRefundTargetEntity:GetAbsOrigin(),
+						angles = RotateOrientation(self._largeRefundTargetEntity:GetAngles(), QAngle(0, math.random(0, 359), 0))
+					})
+					
+					self:AddCurrency(-self.largeCurrency.amount)
+					self:PlayRefundSound()
+					
+					return self.largeCurrency.refundSpeed
+				elseif currency > 0 then
+					self:AddCurrency(-self.smallCurrency.amount)
+					self:PlayRefundSound()
+					
+					local spawnTarget = self._smallRefundTargetEntities[math.random(#self._smallRefundTargetEntities)]
+					
+					SpawnEntityFromTableSynchronous(self.smallCurrency.classname, {
+						origin = spawnTarget:GetAbsOrigin(),
+						angles = RotateOrientation(spawnTarget:GetAngles(), QAngle(0, math.random(0, 359), 0))
+					})
+					
+					return self.smallCurrency.refundSpeed
+				end
 			end
 			
-			--This part will only be reached when currency is 0
+			--This part will be reached when currency is 0
 			self._isRefunding = false
 		end, "VendingShop.Refund", 0)
 	end
