@@ -1,4 +1,6 @@
 
 function LinkSlot(trigger)
-	trigger.activator:GetPrivateScriptScope().LinkSlot(EntityGroup[1]:GetPrivateScriptScope().index, EntityGroup[2], EntityGroup[3])
+	local variables = EntityGroup[1]:GetPrivateScriptScope()
+	
+	trigger.activator:GetPrivateScriptScope().LinkSlot(variables.index, variables.item, variables.cost, EntityGroup[2], EntityGroup[3])
 end

@@ -32,14 +32,26 @@ thisEntity:SetThink(function()
 		
 		if variables and linksReceived == variables.totalLinks then
 			local slots = {}
+			local slotConfig = {}
 			
 			for index, slotLink in ipairs(slotLinks) do
 				slots[index] = Slot(thisEntity, slotLink.drawerEntity, slotLink.slideEntity, CurrencyDisplay(currencyDisplayLinks[index].currencyText))
+				slotConfig[index] = {
+					item = slotLink.item,
+					cost = slotLink.cost
+				}
 			end
 			
 			vendingShop = VendingShop(
 				thisEntity,
-				EntityGroup[8],
+				{
+					refundTriggerEntity = EntityGroup[3],
+					itemRemoveEntity = EntityGroup[4],
+					currencyAddedSoundEntity = EntityGroup[5],
+					slotBoughtSoundEntity = EntityGroup[6],
+					refundSoundEntity = EntityGroup[7],
+					largeRefundTargetEntity = EntityGroup[8]
+				},
 				{
 					EntityGroup[9],
 					EntityGroup[10],
@@ -47,17 +59,18 @@ thisEntity:SetThink(function()
 					EntityGroup[12],
 					EntityGroup[13]
 				},
-				EntityGroup[3],
-				EntityGroup[14],
-				EntityGroup[4],
-				EntityGroup[5],
-				EntityGroup[6],
-				EntityGroup[7],
+				{
+					startingCurrencyAmount = variables.startingCurrencyAmount,
+					slotConfig = slotConfig
+				},
 				CurrencyDisplay(currencyDisplayLinks[variables.refundCurrencyDisplayIndex].currencyText),
 				slots
 			)
-			vendingShop:Activate()
-			vendingShop:SpawnItems()
+			
+			if variables.startActive then
+				vendingShop:Activate()
+				vendingShop:SpawnItems()
+			end
 			
 			return false
 		end
@@ -79,8 +92,10 @@ function Precache(context)
 	context:AddResource("models/weapons/vr_ipistol/capsule_power_cell.vmdl")
 end
 
-function LinkSlot(index, drawerEntity, slideEntity)
+function LinkSlot(index, item, cost, drawerEntity, slideEntity)
 	slotLinks[index] = {
+		item = item,
+		cost = cost,
 		drawerEntity = drawerEntity,
 		slideEntity = slideEntity
 	}

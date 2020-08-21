@@ -3,7 +3,7 @@ local util = require("vending_shop/util")
 
 local VendingShop = class(
 	{
-		constructor = function(self, scriptEntity, largeRefundTarget, smallRefundTargets, refundTriggerEntity, slotOpenTrigger, itemRemoveEntity, currencyAddedSoundEntity, slotBoughtSoundEntity, refundSoundEntity, currencyDisplay, slots)
+		constructor = function(self, scriptEntity, entities, smallRefundTargetEntities, config, currencyDisplay, slots)
 			self.smallCurrency = {
 				classname = "item_hlvr_crafting_currency_small",
 				amount = 1,
@@ -83,19 +83,19 @@ local VendingShop = class(
 			}
 			
 			self._scriptEntity = scriptEntity
-			self._largeRefundTarget = largeRefundTarget
-			self._smallRefundTargets = smallRefundTargets
-			self._refundTriggerEntity = refundTriggerEntity
-			self._itemRemoveEntity = itemRemoveEntity
-			self._currencyAddedSoundEntity = currencyAddedSoundEntity
-			self._slotBoughtSoundEntity = slotBoughtSoundEntity
-			self._refundSoundEntity = refundSoundEntity
+			self._largeRefundTargetEntity = entities.largeRefundTargetEntity
+			self._smallRefundTargetEntities = smallRefundTargetEntities
+			self._refundTriggerEntity = entities.refundTriggerEntity
+			self._itemRemoveEntity = entities.itemRemoveEntity
+			self._currencyAddedSoundEntity = entities.currencyAddedSoundEntity
+			self._slotBoughtSoundEntity = entities.slotBoughtSoundEntity
+			self._refundSoundEntity = entities.refundSoundEntity
 			self._slots = slots
+			self._slotConfig = config.slotConfig
 			self._currencyDisplay = currencyDisplay
-			
 			self._active = false
-			self._currency = 0
 			self._contextManager = ContextManager(self:GetScriptEntity())
+			self:SetCurrency(config.startingCurrencyAmount)
 			
 			getmetatable(self).__tostring = function()
 				return "[" .. self.__class__name .. ": " .. tostring(self:GetScriptEntity()) .. "]"
@@ -155,17 +155,22 @@ end
 
 --Spawn items depending on the settings
 function VendingShop:SpawnItems()
-	for _, slot in ipairs(self:GetSlots()) do
-		local classname = util.TableRandomChance(self.itemChanceTable)
+	for slotIndex, slot in ipairs(self:GetSlots()) do
+		local slotConfig = self:GetSlotConfig(slotIndex)
+		local classname = slotConfig.item == "random" and util.TableRandomChance(self.itemChanceTable) or slotConfig.item
 		local item = self.items[classname]
-		local slotDrawerEntity = slot:GetDrawerEntity()
 		
-		SpawnEntityFromTableSynchronous(classname, {
-			origin = slotDrawerEntity:TransformPointEntityToWorld(item.offsetPosition),
-			angles = RotateOrientation(slotDrawerEntity:GetAngles(), item.offsetAngle)
-		})
+		if item and slotConfig.item ~= "none" then
+			local slotDrawerEntity = slot:GetDrawerEntity()
+			
+			--TODO: Use async
+			SpawnEntityFromTableSynchronous(classname, {
+				origin = slotDrawerEntity:TransformPointEntityToWorld(item.offsetPosition),
+				angles = RotateOrientation(slotDrawerEntity:GetAngles(), item.offsetAngle)
+			})
+		end
 		
-		slot:SetCost(item.cost)
+		slot:SetCost(slotConfig.cost ~= -1 and slotConfig.cost or item.cost)
 		self:RefreshSlot(slot)
 	end
 end
@@ -249,6 +254,10 @@ function VendingShop:BuySlot(slot)
 	self:PlaySlotBoughtSound()
 end
 
+function VendingShop:GetSlotConfig(slotIndex)
+	return self._slotConfig[slotIndex]
+end
+
 --Refund all resin
 function VendingShop:Refund()
 	if not self:IsRefunding() and self:GetCurrency() > 0 then
@@ -259,8 +268,8 @@ function VendingShop:Refund()
 			
 			if currency >= self.largeCurrency.amount then
 				SpawnEntityFromTableSynchronous(self.largeCurrency.classname, {
-					origin = self._largeRefundTarget:GetAbsOrigin(),
-					angles = RotateOrientation(self._largeRefundTarget:GetAngles(), QAngle(0, math.random(0, 359), 0))
+					origin = self._largeRefundTargetEntity:GetAbsOrigin(),
+					angles = RotateOrientation(self._largeRefundTargetEntity:GetAngles(), QAngle(0, math.random(0, 359), 0))
 				})
 				
 				self:AddCurrency(-self.largeCurrency.amount)
@@ -271,7 +280,7 @@ function VendingShop:Refund()
 				self:AddCurrency(-self.smallCurrency.amount)
 				self:PlayRefundSound()
 				
-				local spawnTarget = self._smallRefundTargets[math.random(#self._smallRefundTargets)]
+				local spawnTarget = self._smallRefundTargetEntities[math.random(#self._smallRefundTargetEntities)]
 				
 				SpawnEntityFromTableSynchronous(self.smallCurrency.classname, {
 					origin = spawnTarget:GetAbsOrigin(),
