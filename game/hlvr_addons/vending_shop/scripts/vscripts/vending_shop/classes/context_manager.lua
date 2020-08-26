@@ -1,6 +1,8 @@
 
 local ContextManager = class(
-	{		
+	{
+		_contextLimit = 62,
+		
 		constructor = function(self, entity)
 			self._entity = entity
 			
@@ -21,8 +23,16 @@ end
 
 --Set a string to be stored in the instance entity
 function ContextManager:SetStoredString(key, str)
-	--The "_" is needed to fix a problem where if the string starts with a number, the string will only be that number
-	self:GetEntity():SetContext(key, "_" .. str, 0)
+	local currentStringIndex = 0
+	local keyIndex = 1
+	
+	repeat
+		--The "_" in the value is needed to fix a problem where if the string starts with a number, the string will only be that number
+		self:GetEntity():SetContext(self:_GetStoreKey(key, keyIndex), "_" .. string.sub(str, currentStringIndex + 1, currentStringIndex + self._contextLimit), 0)
+		
+		currentStringIndex = currentStringIndex + self._contextLimit
+		keyIndex = keyIndex + 1
+	until currentStringIndex >= #str
 end
 
 --Set a number to be stored in the instance entity
@@ -53,9 +63,19 @@ end
 
 --Get a string that is stored in the instance entity
 function ContextManager:GetStoredString(key)
-	local str = self:GetEntity():GetContext(key)
+	local str
+	local keyIndex = 1
 	
-	return str and string.sub(str, 2)
+	repeat
+		local strPart = self:GetEntity():GetContext(self:_GetStoreKey(key, keyIndex))
+		
+		if strPart then
+			str = (str or "") .. string.sub(strPart, 2)
+			keyIndex = keyIndex + 1
+		end
+	until not strPart
+	
+	return str
 end
 
 --Get a number that is stored in the instance entity
@@ -105,6 +125,10 @@ function ContextManager:GetStoredAngle(key)
 			return QAngle(axes[1], axes[2], axes[3])
 		end
 	end
+end
+
+function ContextManager:_GetStoreKey(key, keyIndex)
+	return key .. "[" .. keyIndex .. "]"
 end
 
 return ContextManager

@@ -86,16 +86,19 @@ local VendingShop = class(
 			self._largeRefundTargetEntity = entities.largeRefundTargetEntity
 			self._smallRefundTargetEntities = smallRefundTargetEntities
 			self._refundTriggerEntity = entities.refundTriggerEntity
-			self._itemRemoveEntity = entities.itemRemoveEntity
 			self._currencyAddedSoundEntity = entities.currencyAddedSoundEntity
 			self._slotBoughtSoundEntity = entities.slotBoughtSoundEntity
 			self._refundSoundEntity = entities.refundSoundEntity
+			self._prefabRelays1 = entities.prefabRelays1
+			self._prefabRelays2 = entities.prefabRelays2
 			self._slots = slots
 			self._slotConfig = config.slotConfig
 			self._currencyDisplay = currencyDisplay
 			self._active = false
 			self._contextManager = ContextManager(self:GetScriptEntity())
-			self:SetCurrency(config.startingCurrencyAmount)
+			self._interiorEntities = {}
+			self._startingCurrencyAmount = config.startingCurrencyAmount
+			self:SetCurrency(self._startingCurrencyAmount)
 			
 			getmetatable(self).__tostring = function()
 				return "[" .. self.__class__name .. ": " .. tostring(self:GetScriptEntity()) .. "]"
@@ -126,23 +129,37 @@ end
 
 --Activate the vending shop
 function VendingShop:Activate()
-	self._isActive = true
-	self._currencyDisplay:Activate()
-	
-	for _, slot in ipairs(self:GetSlots()) do
-		slot:Activate()
-		self:RefreshSlot(slot)
+	if not self:IsActive() then
+		self._isActive = true
+		self._currencyDisplay:Activate()
+		
+		for _, slot in ipairs(self:GetSlots()) do
+			slot:Activate()
+		end
+		
+		self:SetCurrency(self._startingCurrencyAmount)
+		self:SpawnItems()
+		
+		EntFireByHandle(self:GetScriptEntity(), self._prefabRelays1, "fireuser1")
 	end
 end
 
 --Deactivate the vending shop
 function VendingShop:Deactivate()
-	self._isActive = false
-	self._currencyDisplay:Deactivate()
-	
-	for _, slot in ipairs(self:GetSlots()) do
-		slot:Deactivate()
-		self:RefreshSlot(slot)
+	if self:IsActive() then
+		self._isActive = false
+		
+		self:SetCurrency(0)
+		self:RemoveItems()
+		
+		self._currencyDisplay:Deactivate()
+		
+		for _, slot in ipairs(self:GetSlots()) do
+			slot:Lock()
+			slot:Deactivate()
+		end
+		
+		EntFireByHandle(self:GetScriptEntity(), self._prefabRelays1, "fireuser2")
 	end
 end
 
@@ -176,6 +193,25 @@ function VendingShop:SpawnItems()
 		
 		self:RefreshSlot(slot)
 	end
+end
+
+--Remove all items inside the trigger_remove
+function VendingShop:RemoveItems()
+	for _, entity in pairs(self:GetInteriorEntities()) do
+		entity:RemoveSelf()
+	end
+end
+
+function VendingShop:GetInteriorEntities()
+	local entities = {}
+	
+	for entity, _ in pairs(self._interiorEntities) do
+		if IsValidEntity(entity) then
+			entities[#entities + 1] = entity
+		end
+	end
+	
+	return entities
 end
 
 --Play the slot bought point_soundevent
@@ -281,15 +317,15 @@ function VendingShop:Refund()
 					
 					return self.largeCurrency.refundSpeed
 				elseif currency > 0 then
-					self:AddCurrency(-self.smallCurrency.amount)
-					self:PlayRefundSound()
-					
 					local spawnTarget = self._smallRefundTargetEntities[math.random(#self._smallRefundTargetEntities)]
 					
 					SpawnEntityFromTableSynchronous(self.smallCurrency.classname, {
 						origin = spawnTarget:GetAbsOrigin(),
 						angles = RotateOrientation(spawnTarget:GetAngles(), QAngle(0, math.random(0, 359), 0))
 					})
+					
+					self:AddCurrency(-self.smallCurrency.amount)
+					self:PlayRefundSound()
 					
 					return self.smallCurrency.refundSpeed
 				end
@@ -298,6 +334,8 @@ function VendingShop:Refund()
 			--This part will be reached when currency is 0
 			self._isRefunding = false
 		end, "VendingShop.Refund", 0)
+		
+		EntFireByHandle(self:GetScriptEntity(), self._prefabRelays2, "fireuser1")
 	end
 end
 
@@ -314,10 +352,14 @@ function VendingShop:OnRefundTrigger(trigger)
 			trigger.activator:RemoveSelf()
 			self:AddCurrency(self.largeCurrency.amount)
 			self:PlayCurrencyAddedSound()
+			
+			EntFireByHandle(self:GetScriptEntity(), self._prefabRelays2, "fireuser3")
 		elseif classname == self.smallCurrency.classname then
 			trigger.activator:RemoveSelf()
 			self:AddCurrency(self.smallCurrency.amount)
 			self:PlayCurrencyAddedSound()
+			
+			EntFireByHandle(self:GetScriptEntity(), self._prefabRelays2, "fireuser2")
 		end
 	end
 end
@@ -337,6 +379,30 @@ end
 function VendingShop:OnRefundButtonPressed(trigger)
 	if self:IsActive() then
 		self:Refund()
+	end
+end
+
+function VendingShop:OnInteriorTriggerStartTouch(trigger)
+	if trigger.activator then
+		local foundDrawer = false
+		
+		for _, slot in ipairs(self:GetSlots()) do
+			if trigger.activator == slot:GetDrawerEntity() then
+				foundDrawer = true
+				
+				break
+			end
+		end
+		
+		if not foundDrawer then
+			self._interiorEntities[trigger.activator] = true
+		end
+	end
+end
+
+function VendingShop:OnInteriorTriggerEndTouch(trigger)
+	if trigger.activator then
+		self._interiorEntities[trigger.activator] = nil
 	end
 end
 

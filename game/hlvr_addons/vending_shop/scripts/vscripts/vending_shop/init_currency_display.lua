@@ -1,4 +1,7 @@
+local EntityGroupManager = require("vending_shop/classes/entity_group_manager")
 
 function LinkCurrencyDisplay(trigger)
-	trigger.activator:GetPrivateScriptScope().LinkCurrencyDisplay(EntityGroup[1]:GetPrivateScriptScope().index, EntityGroup[2])
+	local entityGroupManager = EntityGroupManager(thisEntity)
+	
+	trigger.activator:GetPrivateScriptScope().LinkCurrencyDisplay(entityGroupManager:GetEntity(1):GetPrivateScriptScope().index, entityGroupManager:GetEntity(2))
 end

@@ -6,6 +6,8 @@ local VendingShop = require("vending_shop/classes/vending_shop")
 local Slot = require("vending_shop/classes/slot")
 local CurrencyDisplay = require("vending_shop/classes/currency_display")
 local util = require("vending_shop/util")
+local ContextManager = require("vending_shop/classes/context_manager")
+local EntityGroupManager = require("vending_shop/classes/entity_group_manager")
 
 local player
 local variables
@@ -13,19 +15,27 @@ local linksReceived = 0
 local isLinkRelayTriggered = false
 local slotLinks = {}
 local currencyDisplayLinks = {}
+local contextManager = ContextManager(thisEntity)
+local entityGroupManager
 
 thisEntity:SetThink(function()
+	local hasInitialized = contextManager:GetStoredBool("init_vending_shop.hasInitialized")
+	
 	if not player then
 		player = Entities:GetLocalPlayer()
 	end
 	
-	if player and EntityGroup then
+	if player and (EntityGroup or hasInitialized) then
+		if not entityGroupManager then
+			entityGroupManager = EntityGroupManager(thisEntity)
+		end
+		
 		if not variables then
-			variables = EntityGroup[1]:GetPrivateScriptScope()
+			variables = entityGroupManager:GetEntity(1):GetPrivateScriptScope()
 		end
 		
 		if not isLinkRelayTriggered then
-			EntityGroup[2]:Trigger(thisEntity, thisEntity)
+			entityGroupManager:GetEntity(2):Trigger(thisEntity, thisEntity)
 			
 			isLinkRelayTriggered = true
 		end
@@ -35,7 +45,7 @@ thisEntity:SetThink(function()
 			local slotConfig = {}
 			
 			for index, slotLink in ipairs(slotLinks) do
-				slots[index] = Slot(thisEntity, slotLink.drawerEntity, slotLink.slideEntity, CurrencyDisplay(currencyDisplayLinks[index].currencyText))
+				slots[index] = Slot(thisEntity, slotLink.drawerEntity, slotLink.slideEntity, CurrencyDisplay(currencyDisplayLinks[index].currencyTextEntity))
 				slotConfig[index] = {
 					item = slotLink.item,
 					cost = slotLink.cost
@@ -45,19 +55,20 @@ thisEntity:SetThink(function()
 			vendingShop = VendingShop(
 				thisEntity,
 				{
-					refundTriggerEntity = EntityGroup[3],
-					itemRemoveEntity = EntityGroup[4],
-					currencyAddedSoundEntity = EntityGroup[5],
-					slotBoughtSoundEntity = EntityGroup[6],
-					refundSoundEntity = EntityGroup[7],
-					largeRefundTargetEntity = EntityGroup[8]
+					refundTriggerEntity = entityGroupManager:GetEntity(3),
+					currencyAddedSoundEntity = entityGroupManager:GetEntity(5),
+					slotBoughtSoundEntity = entityGroupManager:GetEntity(6),
+					refundSoundEntity = entityGroupManager:GetEntity(7),
+					largeRefundTargetEntity = entityGroupManager:GetEntity(8),
+					prefabRelays1 = entityGroupManager:GetEntity(14),
+					prefabRelays2 = entityGroupManager:GetEntity(15)
 				},
 				{
-					EntityGroup[9],
-					EntityGroup[10],
-					EntityGroup[11],
-					EntityGroup[12],
-					EntityGroup[13]
+					entityGroupManager:GetEntity(9),
+					entityGroupManager:GetEntity(10),
+					entityGroupManager:GetEntity(11),
+					entityGroupManager:GetEntity(12),
+					entityGroupManager:GetEntity(13)
 				},
 				{
 					startingCurrencyAmount = variables.startingCurrencyAmount,
@@ -65,21 +76,22 @@ thisEntity:SetThink(function()
 					itemChances = util.StringDataToTable(variables.itemChances),
 					itemCosts = util.StringDataToTable(variables.itemCosts)
 				},
-				CurrencyDisplay(currencyDisplayLinks[variables.refundCurrencyDisplayIndex].currencyText),
+				CurrencyDisplay(currencyDisplayLinks[variables.refundCurrencyDisplayIndex].currencyTextEntity),
 				slots
 			)
 			
 			if variables.startActive then
 				vendingShop:Activate()
-				vendingShop:SpawnItems()
 			end
+			
+			contextManager:SetStoredBool("init_vending_shop.hasInitialized", true)
 			
 			return false
 		end
 	end
 	
 	return true
-end, "ReadyCheck", 0)
+end, "init_vending_shop.ReadyCheck", 0)
 
 function Precache(context)
 	context:AddResource("models/weapons/vr_grenade/grenade.vmdl")
@@ -105,9 +117,9 @@ function LinkSlot(index, item, cost, drawerEntity, slideEntity)
 	linksReceived = linksReceived + 1
 end
 
-function LinkCurrencyDisplay(index, currencyText)
+function LinkCurrencyDisplay(index, currencyTextEntity)
 	currencyDisplayLinks[index] = {
-		currencyText = currencyText
+		currencyTextEntity = currencyTextEntity
 	}
 	
 	linksReceived = linksReceived + 1
@@ -125,20 +137,32 @@ function OnDeactivate()
 	end
 end
 
-function OnRefundTrigger(trigger)
+function OnRefundTrigger(...)
 	if vendingShop then
-		vendingShop:OnRefundTrigger(trigger)
+		vendingShop:OnRefundTrigger(...)
 	end
 end
 
-function OnSlotOpenTrigger(trigger)
+function OnSlotOpenTrigger(...)
 	if vendingShop then
-		vendingShop:OnSlotOpenTrigger(trigger)
+		vendingShop:OnSlotOpenTrigger(...)
 	end
 end
 
-function OnRefundButtonPressed(trigger)
+function OnRefundButtonPressed(...)
 	if vendingShop then
-		vendingShop:OnRefundButtonPressed(trigger)
+		vendingShop:OnRefundButtonPressed(...)
+	end
+end
+
+function OnInteriorTriggerStartTouch(...)
+	if vendingShop then
+		vendingShop:OnInteriorTriggerStartTouch(...)
+	end
+end
+
+function OnInteriorTriggerEndTouch(...)
+	if vendingShop then
+		vendingShop:OnInteriorTriggerEndTouch(...)
 	end
 end
