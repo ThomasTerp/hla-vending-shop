@@ -1,3 +1,7 @@
+if IsClient() then
+	return
+end
+
 local EntityGroupManager = require("vending_shop/classes/entity_group_manager")
 
 function LinkCurrencyDisplay(trigger)

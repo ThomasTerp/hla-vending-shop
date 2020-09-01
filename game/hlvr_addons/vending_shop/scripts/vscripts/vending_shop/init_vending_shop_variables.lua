@@ -1,3 +1,7 @@
+if IsClient() then
+	return
+end
+
 local ContextManager = require("vending_shop/classes/context_manager")
 local contextManager = ContextManager(thisEntity)
 
