@@ -322,7 +322,7 @@ function VendingShop:Refund()
 				if currency >= self.largeCurrency.amount then
 					SpawnEntityFromTableSynchronous(self.largeCurrency.classname, {
 						origin = self._largeRefundTargetEntity:GetAbsOrigin(),
-						angles = RotateOrientation(self._largeRefundTargetEntity:GetAngles(), QAngle(0, math.random(0, 359), 0))
+						angles = RotateOrientation(self._largeRefundTargetEntity:GetAngles(), QAngle(0, RandomFloat(0, 360), 0))
 					})
 					
 					self:AddCurrency(-self.largeCurrency.amount)
@@ -330,11 +330,11 @@ function VendingShop:Refund()
 					
 					return self.largeCurrency.refundSpeed
 				elseif currency > 0 then
-					local spawnTarget = self._smallRefundTargetEntities[math.random(#self._smallRefundTargetEntities)]
+					local spawnTarget = self._smallRefundTargetEntities[RandomInt(1, #self._smallRefundTargetEntities)]
 					
 					SpawnEntityFromTableSynchronous(self.smallCurrency.classname, {
 						origin = spawnTarget:GetAbsOrigin(),
-						angles = RotateOrientation(spawnTarget:GetAngles(), QAngle(0, math.random(0, 359), 0))
+						angles = RotateOrientation(spawnTarget:GetAngles(), QAngle(0, RandomFloat(0, 360), 0))
 					})
 					
 					self:AddCurrency(-self.smallCurrency.amount)
