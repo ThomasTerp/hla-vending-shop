@@ -48,8 +48,8 @@ local VendingShop = class(
 				};
 				item_healthvial = {
 					cost = config.itemCosts.item_healthvial,
-					offsetPosition = Vector(-4.02, -2.21, -2.9019),
-					offsetAngle = QAngle(36.9168, 268.969, -56.3617)
+					offsetPosition = Vector(4.0326, -0.862, 1.5236),
+					offsetAngle = QAngle(2.85216, 309.537, 116.915)
 				};
 			}
 			self.itemChanceTable = {
@@ -103,6 +103,14 @@ local VendingShop = class(
 			if self:IsActive() then
 				self._currencyDisplay:Activate()
 			end
+			
+			self:AttachTrigger("OnRefundTrigger")
+			self:AttachTrigger("OnActivate", function() self:Activate() end)
+			self:AttachTrigger("OnDeactivate", function() self:Deactivate() end)
+			self:AttachTrigger("OnSlotOpenTrigger")
+			self:AttachTrigger("OnRefundButtonPressed")
+			self:AttachTrigger("OnInteriorTriggerStartTouch")
+			self:AttachTrigger("OnInteriorTriggerEndTouch")
 			
 			getmetatable(self).__tostring = function()
 				return "[" .. self.__class__name .. ": " .. tostring(self:GetScriptEntity()) .. "]"
@@ -355,6 +363,16 @@ end
 --Is refunding?
 function VendingShop:IsRefunding()
 	return self._isRefunding
+end
+
+--Attach a trigger to be called on the script entity using the CallScriptFunction input
+--Callback will be defaulted to the function of the same trigger name on this vending shop
+function VendingShop:AttachTrigger(triggerName, callback)
+	callback = callback or self[triggerName]
+	
+	self:GetScriptEntity():GetPrivateScriptScope()[triggerName] = function(...)
+		callback(self, ...)
+	end
 end
 
 function VendingShop:OnRefundTrigger(trigger)

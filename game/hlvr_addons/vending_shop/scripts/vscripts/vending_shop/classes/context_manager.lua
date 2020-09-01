@@ -3,7 +3,7 @@
 --Has no limit on context size
 local ContextManager = class(
 	{
-		_contextLimit = 62,
+		_engineContextLimit = 62,
 		
 		constructor = function(self, entity)
 			self._entity = entity
@@ -31,9 +31,9 @@ function ContextManager:SetStoredString(key, str)
 	
 	repeat
 		--The "_" in the value is needed to fix a problem where if the string starts with a number, the string will only be that number
-		self:GetEntity():SetContext(self:_GetStoreKey(key, keyIndex), "_" .. string.sub(str, currentStringIndex + 1, currentStringIndex + self._contextLimit), 0)
+		self:GetEntity():SetContext(self:_GetStoreKey(key, keyIndex), "_" .. string.sub(str, currentStringIndex + 1, currentStringIndex + self._engineContextLimit), 0)
 		
-		currentStringIndex = currentStringIndex + self._contextLimit
+		currentStringIndex = currentStringIndex + self._engineContextLimit
 		keyIndex = keyIndex + 1
 	until currentStringIndex >= #str
 end
