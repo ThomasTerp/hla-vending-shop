@@ -1,4 +1,6 @@
 
+--Class for storing contexts easily
+--Has no limit on context size
 local ContextManager = class(
 	{
 		_contextLimit = 62,
@@ -17,6 +19,7 @@ local ContextManager = class(
 	nil
 )
 
+--Get the entity that contexts are stored on
 function ContextManager:GetEntity()
 	return self._entity
 end

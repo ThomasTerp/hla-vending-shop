@@ -80,7 +80,7 @@ thisEntity:SetThink(function()
 				slots
 			)
 			
-			if variables.startActive then
+			if not hasInitialized and variables.startActive then
 				vendingShop:Activate()
 			end
 			

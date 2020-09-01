@@ -1,5 +1,6 @@
 local ContextManager = require("vending_shop/classes/context_manager")
 
+--Class for interacting with EntityGroup, even after loading a save
 local EntityGroupManager = class(
 	{		
 		constructor = function(self, scriptEntity)
@@ -20,10 +21,12 @@ local EntityGroupManager = class(
 	nil
 )
 
+--Get the entity this was instantiated from
 function EntityGroupManager:GetScriptEntity()
 	return self._scriptEntity
 end
 
+--Get an EntityGroup entity by index
 function EntityGroupManager:GetEntity(entityGroupIndex)
 	return (self._scriptScope.EntityGroup and self._scriptScope.EntityGroup[entityGroupIndex]) or self._contextManager:GetStoredEntity(self:_GetStoreKey(entityGroupIndex))
 end

@@ -1,6 +1,7 @@
 local ContextManager = require("vending_shop/classes/context_manager")
 local util = require("vending_shop/util")
 
+--Class for a vending shop
 local VendingShop = class(
 	{
 		constructor = function(self, scriptEntity, entities, smallRefundTargetEntities, config, currencyDisplay, slots)
@@ -14,7 +15,6 @@ local VendingShop = class(
 				amount = 5,
 				refundSpeed = 0.4
 			}
-			
 			self.items = {
 				item_hlvr_clip_energygun = {
 					cost = config.itemCosts.item_hlvr_clip_energygun,
@@ -94,11 +94,15 @@ local VendingShop = class(
 			self._slots = slots
 			self._slotConfig = config.slotConfig
 			self._currencyDisplay = currencyDisplay
-			self._active = false
 			self._contextManager = ContextManager(self:GetScriptEntity())
+			self._isActive = self._contextManager:GetStoredBool("VendingShop._isActive") or false
 			self._interiorEntities = {}
 			self._startingCurrencyAmount = config.startingCurrencyAmount
-			self:SetCurrency(self._startingCurrencyAmount)
+			self:SetCurrency(self._contextManager:GetStoredNumber("VendingShop._currency") or self._startingCurrencyAmount)
+			
+			if self:IsActive() then
+				self._currencyDisplay:Activate()
+			end
 			
 			getmetatable(self).__tostring = function()
 				return "[" .. self.__class__name .. ": " .. tostring(self:GetScriptEntity()) .. "]"
@@ -111,18 +115,22 @@ local VendingShop = class(
 	nil
 )
 
+--Get the entity this was instantiated from
 function VendingShop:GetScriptEntity()
 	return self._scriptEntity
 end
 
+--Get a slot by index
 function VendingShop:GetSlot(index)
 	return self._slots[index]
 end
 
+--Get the currency display
 function VendingShop:GetCurrencyDisplay()
 	return self._currencyDisplay
 end
 
+--Get the context manager
 function VendingShop:GetContextManager()
 	return self._contextManager
 end
@@ -131,6 +139,7 @@ end
 function VendingShop:Activate()
 	if not self:IsActive() then
 		self._isActive = true
+		self._contextManager:SetStoredBool("VendingShop._isActive", true)
 		self._currencyDisplay:Activate()
 		
 		for _, slot in ipairs(self:GetSlots()) do
@@ -148,11 +157,11 @@ end
 function VendingShop:Deactivate()
 	if self:IsActive() then
 		self._isActive = false
+		self._contextManager:SetStoredBool("VendingShop._isActive", false)
+		self._currencyDisplay:Deactivate()
 		
 		self:SetCurrency(0)
 		self:RemoveItems()
-		
-		self._currencyDisplay:Deactivate()
 		
 		for _, slot in ipairs(self:GetSlots()) do
 			slot:Lock()
@@ -202,6 +211,7 @@ function VendingShop:RemoveItems()
 	end
 end
 
+--Get all physics entities (excluding drawers) inside the vending shop
 function VendingShop:GetInteriorEntities()
 	local entities = {}
 	
@@ -229,6 +239,7 @@ function VendingShop:PlayRefundSound()
 	EntFireByHandle(self:GetScriptEntity(), self._refundSoundEntity, "StartSound")
 end
 
+--Refresh the state of a slot
 function VendingShop:RefreshSlot(slot)
 	if slot:IsActive() then
 		if self:CanAfford(slot:GetCost()) then
@@ -243,6 +254,7 @@ function VendingShop:RefreshSlot(slot)
 	end
 end
 
+--Refresh the state of all slots
 function VendingShop:RefreshSlots()
 	for _, slot in ipairs(self:GetSlots()) do
 		self:RefreshSlot(slot)
@@ -252,6 +264,7 @@ end
 --Set currency and unlock/lock slots if they can/can't be afforded
 function VendingShop:SetCurrency(currency)
 	self._currency = currency
+	self._contextManager:SetStoredNumber("VendingShop._currency", currency)
 	
 	self:GetCurrencyDisplay():SetAmount(currency)
 	self:RefreshSlots()
