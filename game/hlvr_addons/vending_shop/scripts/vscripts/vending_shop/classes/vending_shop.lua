@@ -102,6 +102,10 @@ local VendingShop = class(
 			
 			if self:IsActive() then
 				self._currencyDisplay:Activate()
+				EntFireByHandle(self:GetScriptEntity(), self._prefabRelays1, "fireuser4")
+				EntFireByHandle(self:GetScriptEntity(), self._prefabRelays1, "fireuser3")
+			else
+				EntFireByHandle(self:GetScriptEntity(), self._prefabRelays1, "fireuser4")
 			end
 			
 			self:AttachTrigger("OnRefundTrigger")
@@ -158,6 +162,7 @@ function VendingShop:Activate()
 		self:SpawnItems()
 		
 		EntFireByHandle(self:GetScriptEntity(), self._prefabRelays1, "fireuser1")
+		EntFireByHandle(self:GetScriptEntity(), self._prefabRelays1, "fireuser3")
 	end
 end
 
@@ -177,6 +182,7 @@ function VendingShop:Deactivate()
 		end
 		
 		EntFireByHandle(self:GetScriptEntity(), self._prefabRelays1, "fireuser2")
+		EntFireByHandle(self:GetScriptEntity(), self._prefabRelays1, "fireuser4")
 	end
 end
 
