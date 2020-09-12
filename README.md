@@ -1,8 +1,8 @@
 # Half-Life: Alyx - Vending Shop Prefab
-This is a vending shop prefab for map creators to use in custom Half-Life: Alyx maps.
+Vending shop prefab for map creators to use in custom Half-Life: Alyx maps.
+<img src="https://user-images.githubusercontent.com/3063873/93004076-0ba27980-f544-11ea-9760-52c59b0b8bca.png" />
 <br />
-<br />
-It has 6 slots for items that players can purchase using resin. The items can either be randomized or the map creator can choose what goes in each slot along with their cost. The items are ammo, grenades and syringes. The map creator can also place custom items, like a keycard.
+It has 6 slots for items that players can purchase using resin. The items can either be randomized or map creators can choose what goes in each slot along with their cost. The items are ammo, grenades and syringes. Map creators can also place custom items, like a keycard.
 
 ## Prefab Variables
 These variables can be changed per prefab instance to customize how the shop functions.
