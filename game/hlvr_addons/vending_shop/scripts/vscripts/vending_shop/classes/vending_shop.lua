@@ -89,6 +89,7 @@ local VendingShop = class(
 			self._currencyAddedSoundEntity = entities.currencyAddedSoundEntity
 			self._slotBoughtSoundEntity = entities.slotBoughtSoundEntity
 			self._refundSoundEntity = entities.refundSoundEntity
+			self._tutorialTextEntity = entities.tutorialTextEntity
 			self._prefabRelays1 = entities.prefabRelays1
 			self._prefabRelays2 = entities.prefabRelays2
 			self._slots = slots
@@ -97,6 +98,9 @@ local VendingShop = class(
 			self._contextManager = ContextManager(self:GetScriptEntity())
 			self._isActive = self._contextManager:GetStoredBool("VendingShop._isActive") or false
 			self._interiorEntities = {}
+			self._isTutorialDisabled = config.isTutorialDisabled
+			self._isTutorialVisible = false
+			self._tutorialActivationDistance = 96
 			self._startingCurrencyAmount = config.startingCurrencyAmount
 			self:SetCurrency(self._contextManager:GetStoredNumber("VendingShop._currency") or self._startingCurrencyAmount)
 			
@@ -115,6 +119,8 @@ local VendingShop = class(
 			self:AttachTrigger("OnRefundButtonPressed")
 			self:AttachTrigger("OnInteriorTriggerStartTouch")
 			self:AttachTrigger("OnInteriorTriggerEndTouch")
+			
+			self:Tutorial()
 			
 			getmetatable(self).__tostring = function()
 				return "[" .. self.__class__name .. ": " .. tostring(self:GetScriptEntity()) .. "]"
@@ -209,10 +215,7 @@ function VendingShop:SpawnItems()
 		end
 		
 		slot:SetCost(slotConfig.cost ~= -1 and slotConfig.cost or (item and item.cost) or 0)
-		
-		if classname == "none" and slotConfig.cost == -1 then
-			slot:SetBought(true)
-		end
+		slot:SetBought(classname == "none" and slotConfig.cost == -1)
 		
 		self:RefreshSlot(slot)
 	end
@@ -371,6 +374,49 @@ function VendingShop:IsRefunding()
 	return self._isRefunding
 end
 
+--Do tutorial if it has not been shown yet, and it isn't disabled
+function VendingShop:Tutorial()
+	local player = Entities:GetLocalPlayer()
+	local playerContextManager = ContextManager(player)
+	
+	if self._isTutorialDisabled or playerContextManager:GetStoredBool("VendingShop._hasTutorialBeenShown") then
+		EntFireByHandle(self:GetScriptEntity(), self._tutorialTextEntity, "Disable")		
+		self._isTutorialVisible = false
+	else
+		self:GetScriptEntity():SetThink(function()
+			if playerContextManager:GetStoredBool("VendingShop._hasTutorialBeenShown") then
+				return false
+			else
+				local distance = VectorDistance(player:GetAbsOrigin(), self._tutorialTextEntity:GetAbsOrigin())
+				
+				if self._isTutorialVisible and distance > self._tutorialActivationDistance then
+					EntFireByHandle(self:GetScriptEntity(), self._tutorialTextEntity, "Disable")
+					self._isTutorialVisible = false
+				elseif not self._isTutorialVisible and distance <= self._tutorialActivationDistance then
+					EntFireByHandle(self:GetScriptEntity(), self._tutorialTextEntity, "Enable")
+					self._tutorialTextEntity:EmitSound("Instructor.StartLesson")
+					self._isTutorialVisible = true
+				end
+				
+				return true
+			end
+		end, "VendingShop.Tutorial", 0)
+	end
+end
+
+function VendingShop:DisableTutorial()
+	local playerContextManager = ContextManager(Entities:GetLocalPlayer())
+	
+	if self._isTutorialVisible then
+		EntFireByHandle(self:GetScriptEntity(), self._tutorialTextEntity, "Disable")		
+		self._isTutorialVisible = false
+	end
+	
+	if not playerContextManager:GetStoredBool("VendingShop._hasTutorialBeenShown") then
+		playerContextManager:SetStoredBool("VendingShop._hasTutorialBeenShown", true)
+	end
+end
+
 --Attach a trigger to be called on the script entity using the CallScriptFunction input
 --Callback will be defaulted to the function of the same trigger name on this vending shop
 function VendingShop:AttachTrigger(triggerName, callback)
@@ -389,14 +435,18 @@ function VendingShop:OnRefundTrigger(trigger)
 			trigger.activator:RemoveSelf()
 			self:AddCurrency(self.largeCurrency.amount)
 			self:PlayCurrencyAddedSound()
+			self:DisableTutorial()
 			
 			EntFireByHandle(self:GetScriptEntity(), self._prefabRelays2, "fireuser3")
 		elseif classname == self.smallCurrency.classname then
 			trigger.activator:RemoveSelf()
 			self:AddCurrency(self.smallCurrency.amount)
 			self:PlayCurrencyAddedSound()
+			self:DisableTutorial()
 			
 			EntFireByHandle(self:GetScriptEntity(), self._prefabRelays2, "fireuser2")
+		else
+			trigger.activator:SetOrigin(self:GetScriptEntity():GetAbsOrigin())
 		end
 	end
 end

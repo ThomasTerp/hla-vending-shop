@@ -60,8 +60,9 @@ thisEntity:SetThink(function()
 					slotBoughtSoundEntity = entityGroupManager:GetEntity(6),
 					refundSoundEntity = entityGroupManager:GetEntity(7),
 					largeRefundTargetEntity = entityGroupManager:GetEntity(8),
-					prefabRelays1 = entityGroupManager:GetEntity(14),
-					prefabRelays2 = entityGroupManager:GetEntity(15)
+					tutorialTextEntity = entityGroupManager:GetEntity(14),
+					prefabRelays1 = entityGroupManager:GetEntity(15),
+					prefabRelays2 = entityGroupManager:GetEntity(16)
 				},
 				{
 					entityGroupManager:GetEntity(9),
@@ -74,7 +75,8 @@ thisEntity:SetThink(function()
 					startingCurrencyAmount = variables.startingCurrencyAmount,
 					slotConfig = slotConfig,
 					itemChances = util.StringDataToTable(variables.itemChances),
-					itemCosts = util.StringDataToTable(variables.itemCosts)
+					itemCosts = util.StringDataToTable(variables.itemCosts),
+					isTutorialDisabled = variables.isTutorialDisabled
 				},
 				CurrencyDisplay(currencyDisplayLinks[variables.refundCurrencyDisplayIndex].currencyTextEntity),
 				slots
