@@ -33,4 +33,4 @@ These can break the whole vending shop if formatted incorrectly, so only change 
 Prefab Variable | Default Value | Description
 --- | --- | ---
 Random Item Chances | item_hlvr_clip_energygun=80, <br />item_hlvr_clip_energygun_multiple=20, <br />item_hlvr_clip_shotgun_multiple=100, <br />item_hlvr_clip_rapidfire=100, item_hlvr_grenade_frag=50, <br />item_hlvr_grenade_xen=50, <br />item_healthvial=100 | Comma separated string to assign chance (0 to 100) for randomized slots
-Item Costs (when -1) | item_hlvr_clip_energygun=3, <br />item_hlvr_clip_energygun_multiple=10, <br />item_hlvr_clip_shotgun_multiple=6, <br />item_hlvr_clip_rapidfire=8, item_hlvr_grenade_frag=5, <br />item_hlvr_grenade_xen=5, <br />item_healthvial=5 | Comma separated string to assign cost for item types
+Item Costs (when -1) | item_hlvr_clip_energygun=3, <br />item_hlvr_clip_energygun_multiple=10, <br />item_hlvr_clip_shotgun_multiple=6, <br />item_hlvr_clip_rapidfire=8, item_hlvr_grenade_frag=5, <br />item_hlvr_grenade_xen=5, <br />item_healthvial=5 | Comma separated string to assign cost for item types<br />These only get applied when the slot cost is set to -1
