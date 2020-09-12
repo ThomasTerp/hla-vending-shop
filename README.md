@@ -3,10 +3,8 @@ Vending shop prefab for map creators to use in custom Half-Life: Alyx maps.
 <img src="https://user-images.githubusercontent.com/3063873/93004076-0ba27980-f544-11ea-9760-52c59b0b8bca.png" />
 <br />
 It has 6 slots for items that players can purchase using resin. The items can either be randomized or map creators can choose what goes in each slot along with their cost. The items are ammo, grenades and syringes. Map creators can also place custom items, like a keycard.
-
 ## Prefab Variables
-These variables can be changed per prefab instance to customize how the shop functions.
-
+These variables can be changed per prefab instance to customize how the vending shop functions.
 Prefab Variable | Default Value | Description
 --- | --- | ---
 Start Active | On | Start the vending shop activated<br />Items will only be spawned while active
@@ -26,10 +24,8 @@ Slot 3 Item | Random | Type of item inside slot 3
 Slot 4 Item | Random | Type of item inside slot 4
 Slot 5 Item | Random | Type of item inside slot 5
 Slot 6 Item | Random | Type of item inside slot 6
-
 ## Prefab Variables - Advanced
-These can break the whole vending shop if formatted incorrectly, so only change them if you need to.<br />
-
+These variables can break the whole vending shop if formatted incorrectly, so only change them if you know what you are doing.
 Prefab Variable | Default Value | Description
 --- | --- | ---
 Random Item Chances | item_hlvr_clip_energygun=80, <br />item_hlvr_clip_energygun_multiple=20, <br />item_hlvr_clip_shotgun_multiple=100, <br />item_hlvr_clip_rapidfire=100, item_hlvr_grenade_frag=50, <br />item_hlvr_grenade_xen=50, <br />item_healthvial=100 | Comma separated string to assign chance (0 to 100) for randomized slots
