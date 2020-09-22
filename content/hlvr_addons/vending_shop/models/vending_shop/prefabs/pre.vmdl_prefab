@@ -6,22 +6,6 @@
 		children = 
 		[
 			{
-				_class = "RenderMeshList"
-				children = 
-				[
-					{
-						_class = "RenderMeshFile"
-						filename = "models\\vending_shop\\dmx\\mesh\\drawer.dmx"
-						import_scale = 1.0
-						import_filter = 
-						{
-							exclude_by_default = false
-							exception_list = [  ]
-						}
-					},
-				]
-			},
-			{
 				_class = "GameDataList"
 				children = 
 				[
