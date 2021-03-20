@@ -23,6 +23,7 @@ Follow these steps to add a vending shop to your map:
 ## Features
 ## Prefab Variables
 These variables can be changed per prefab instance to customize how the vending shop functions.
+![properties](https://user-images.githubusercontent.com/3063873/111882560-91e9bd80-89b6-11eb-83d8-7c68b3a4870b.PNG)
 Prefab Variable | Default Value | Description
 --- | --- | ---
 Start Active | On | Start the vending shop activated<br />Items will only be spawned while active
