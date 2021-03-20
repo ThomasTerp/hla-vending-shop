@@ -6,6 +6,9 @@
 *.ico
 *.mdmp
 
+# Compiled content
+*.bin
+
 /content/*
 !/content/hlvr_addons/
 /content/hlvr_addons/*
