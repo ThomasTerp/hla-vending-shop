@@ -32,6 +32,8 @@
 /content/hlvr_addons/**/_bakeresourcecache
 /content/hlvr_addons/**/_vrad3
 
+addoninfo.txt
+
 /game/*
 /game/*.txt
 /game/_toolsettings
