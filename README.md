@@ -43,4 +43,4 @@ Follow these steps to add a vending shop to your map:
 2. Press `Import Prefab`
 3. Find the folder containing the vending shop prefab in `\content\hlvr_addons\<YOUR ADDON NAME>\maps\prefabs\vending_shop\` and open `vending_shop.vmap`
 4. The prefab should now be added to the map and is ready to use
-5. Optionally you can change the properties of the prefab to your liking, see [Prefab Variables](https://github.com/ThomasTerp/hla-vending-shop#prefab-variables) above for more detailed descriptions of each variable
+5. Optionally you can change the properties of the prefab to your liking, see [Prefab Variables](#prefab-variables) above for more detailed descriptions of each variable
