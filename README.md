@@ -23,7 +23,7 @@ Follow these steps to add a vending shop to your map:
 5. Optionally you can change the properties of the prefab to your liking, see [Prefab Variables](#prefab-variables) below for more detailed descriptions of each variable
 ## Features
 ## Prefab Variables
-These variables can be changed per prefab instance to customize how the vending shop functions.
+These variables can be changed per prefab instance to customize how the vending shop functions.<br />
 ![Prefab variables](https://user-images.githubusercontent.com/3063873/111882999-f3ab2700-89b8-11eb-9466-9ed81c487153.png)
 Prefab Variable | Default Value | Description
 --- | --- | ---
