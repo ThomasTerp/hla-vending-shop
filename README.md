@@ -32,11 +32,15 @@ Prefab Variable | Default Value | Description
 Random Item Chances | item_hlvr_clip_energygun=80, <br />item_hlvr_clip_energygun_multiple=20, <br />item_hlvr_clip_shotgun_multiple=100, <br />item_hlvr_clip_rapidfire=100, item_hlvr_grenade_frag=50, <br />item_hlvr_grenade_xen=50, <br />item_healthvial=100 | Comma separated string to assign chance (0 to 100) for randomized slots
 Item Costs<br />(when -1) | item_hlvr_clip_energygun=3, <br />item_hlvr_clip_energygun_multiple=10, <br />item_hlvr_clip_shotgun_multiple=6, <br />item_hlvr_clip_rapidfire=8, item_hlvr_grenade_frag=5, <br />item_hlvr_grenade_xen=5, <br />item_healthvial=5 | Comma separated string to assign cost for item types<br />These only get applied when the slot cost is set to -1
 ## Installing
-I made a <a href="youtube.com">video</a> showing how to install and use the vending shop prefab, these are the steps I take in the video to install it:
+Follow these steps to install it for use with your addon:
 1. Download the <a href="https://github.com/ThomasTerp/hla-vending-shop/releases">latest release</a>
-2. Extract the contents of `\game\hla_addons\vending_shop\` into your<br />`C:\Program Files (x86)\Steam\steamapps\common\Half-Life Alyx\game\hlvr_addons\<YOUR ADDON NAME>\` folder
-3. Extract the contents of `\content\hla_addon\vending_shop\` into your<br />`C:\Program Files (x86)\Steam\steamapps\common\Half-Life Alyx\content\hlvr_addons\<YOUR ADDON NAME>\` folder
-4. The vending shop comes with a demo map, which you should remove before publishing your map:<br />Remove `vending_shop_demo.vpk` from `\game\hlvr_addons\<YOUR ADDON NAME>\maps`<br />Remove `vending_shop_demo.vmap` from `\content\hlvr_addons\<YOUR ADDON NAME>\maps`
+2. Extract the folders inside of `\game\hla_addons\vending_shop\` into your<br />`C:\Program Files (x86)\Steam\steamapps\common\Half-Life Alyx\game\hlvr_addons\<YOUR ADDON NAME>\` folder
+3. Extract the folders inside of `\content\hla_addon\vending_shop\` into your<br />`C:\Program Files (x86)\Steam\steamapps\common\Half-Life Alyx\content\hlvr_addons\<YOUR ADDON NAME>\` folder
+4. The vending shop comes with a demo map, you should remove that before publishing your map:<br />Remove `vending_shop_demo.vpk` from `\game\hlvr_addons\<YOUR ADDON NAME>\maps`<br />Remove `vending_shop_demo.vmap` from `\content\hlvr_addons\<YOUR ADDON NAME>\maps`
 ## How to use
-I made a <a href="youtube.com">video</a> showing how to install and use the vending shop prefab, these are the steps I take in the video to use it:
-1. 
+Follow these steps to add a vending shop to your map:
+1. Open the `Prefabs` tab at the top of the Hammer window
+2. Press `Import Prefab`
+3. Find the folder containing the vending shop prefab in `\content\hlvr_addons\<YOUR ADDON NAME>\maps\prefabs\vending_shop\` and open `vending_shop.vmap`
+4. The prefab should now be added to the map and is ready to use
+5. Optionally you can change the properties of the prefab to your liking, see [Prefab Variables](https://github.com/ThomasTerp/hla-vending-shop#prefab-variables) above for more detailed descriptions of each variable
