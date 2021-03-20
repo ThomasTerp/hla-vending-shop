@@ -6,21 +6,6 @@
 *.ico
 *.mdmp
 
-# Compiled content
-*.vpk
-*.los
-*.ain
-*.vmdl_c
-*.vmat_c
-*.vtex_c
-*.vsnd_c
-*.vsndevts_c
-*.vpcf_c
-*.vanmgrph_c
-*.vpost_c
-*.bin
-*.exr
-
 /content/*
 !/content/hlvr_addons/
 /content/hlvr_addons/*
@@ -51,6 +36,7 @@ addoninfo.txt
 /game/hlvr_addons/**/tools_thumbnail_cache.bin
 /game/hlvr_addons/hlvrcfg.cfg
 /game/hlvr_addons/vpks
+!/game/hlvr_addons/vending_shop/maps
 
 ### Addons distributed with the tools
 ### All users have these addons, they're readonly anyway so they shouldn't be tracked.
