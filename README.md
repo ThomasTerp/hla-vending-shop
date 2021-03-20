@@ -36,7 +36,7 @@ Follow these steps to install it for use with your addon:
 1. Download the <a href="https://github.com/ThomasTerp/hla-vending-shop/releases">latest release</a>
 2. Extract the folders inside of `\game\hla_addons\vending_shop\` into your<br />`C:\Program Files (x86)\Steam\steamapps\common\Half-Life Alyx\game\hlvr_addons\<YOUR ADDON NAME>\` folder
 3. Extract the folders inside of `\content\hla_addon\vending_shop\` into your<br />`C:\Program Files (x86)\Steam\steamapps\common\Half-Life Alyx\content\hlvr_addons\<YOUR ADDON NAME>\` folder
-4. If you installed the demo map, you should remove that before publishing your map.<br />**Remove all files named `vending_shop_demo` from these locations:**<br />`\content\hlvr_addons\<YOUR ADDON NAME>\maps\`<br />`\game\hlvr_addons\<YOUR ADDON NAME>\maps\`<br />`\game\hlvr_addons\<YOUR ADDON NAME>\maps\graphs\`<br />
+4. If you installed the demo map, remember to remove that map before publishing your map to the workshop.<br />**Remove all files named `vending_shop_demo` from these locations:**<br />`\content\hlvr_addons\<YOUR ADDON NAME>\maps\`<br />`\game\hlvr_addons\<YOUR ADDON NAME>\maps\`<br />`\game\hlvr_addons\<YOUR ADDON NAME>\maps\graphs\`<br />
 ## How to use
 Follow these steps to add a vending shop to your map:
 1. Open the `Prefabs` tab at the top of the Hammer window
