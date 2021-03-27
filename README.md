@@ -1,9 +1,9 @@
 # Half-Life: Alyx - Vending Shop Prefab
-A vending shop prefab for map creators to use in custom Half-Life: Alyx maps.<br />
+A vending machine prefab for map creators to use in custom Half-Life: Alyx maps.<br />
 https://youtu.be/HkA5BKw9mug<br />
 <img src="https://user-images.githubusercontent.com/3063873/93004076-0ba27980-f544-11ea-9760-52c59b0b8bca.png" />
 <br />
-It has 6 slots for items that players can purchase using resin. The items can either be randomized or map creators can choose what goes in each slot along with their cost. The items are ammo, grenades and syringes. Map creators can also place custom items, like a keycard. The vending shop is made mostly using scripting, however you don't have to touch a single line of code to use or customize it.
+It has 6 slots for items that players can purchase using resin. The items can either be randomized or map creators can choose what goes in each slot along with their cost. The items are ammo, grenades and syringes. Map creators can also place custom items, like a keycard. The Vending Shop is made mostly using scripting, however you don't have to touch a single line of code to use or customize it.
 ## Installing
 Follow these steps to install it for use with your addon:
 1. Download the <a href="https://github.com/ThomasTerp/hla-vending-shop/releases">latest release</a>
@@ -15,19 +15,19 @@ Follow these steps to install it for use with your addon:
 * **`\game\hlvr_addons\<YOUR ADDON NAME>\maps\`**
 * **`\game\hlvr_addons\<YOUR ADDON NAME>\maps\graphs\`**
 ## How to use
-Follow these steps to add a vending shop to your map:
+Follow these steps to add a Vending Shop to your map:
 1. Open the `Prefabs` tab at top of the Hammer window
 2. Select `Import Prefab`
-3. Find the folder containing the vending shop prefab in `\content\hlvr_addons\<YOUR ADDON NAME>\maps\prefabs\vending_shop\` and open `vending_shop.vmap`
+3. Find the folder containing the Vending Shop prefab in `\content\hlvr_addons\<YOUR ADDON NAME>\maps\prefabs\vending_shop\` and open `vending_shop.vmap`
 4. The prefab should now be added to the map and is ready to use
 5. Optionally you can change the properties of the prefab to your liking, see [Prefab Variables](#prefab-variables) below for more detailed descriptions of each variable
 ## Prefab Variables
-These variables can be changed per prefab instance to customize how the vending shop functions.<br />
+These variables can be changed per prefab instance to customize how the Vending Shop functions.<br />
 ![Prefab variables](https://user-images.githubusercontent.com/3063873/111882999-f3ab2700-89b8-11eb-9466-9ed81c487153.png)
 Prefab Variable | Default Value | Description
 --- | --- | ---
-Start Active | On | Start the vending shop activated<br />Items will only be spawned while active
-Starting Currency Amount | 0 | How much currency the vending shop starts with
+Start Active | On | Start the Vending Shop activated<br />Items will only be spawned while active
+Starting Currency Amount | 0 | How much currency the Vending Shop starts with
 Extra Lights | Off | Turn on extra lighting, useful for dark places
 Tutorial | On | Enable tutorial that shows players where to put currency<br />Only shows once globabally per new game
 Disable Emit Trigger | Off | Disable the trigger that allows the player to take resin out of their backpack<br />This can be used if you want to use your own trigger that fits the environment shape better
@@ -44,7 +44,7 @@ Slot 4 Item | Random | Type of item inside slot 4
 Slot 5 Item | Random | Type of item inside slot 5
 Slot 6 Item | Random | Type of item inside slot 6
 ## Prefab Variables - Advanced
-These variables can break the whole vending shop if formatted incorrectly, so only change them if you know what you are doing.
+These variables can break the whole Vending Shop if formatted incorrectly, so only change them if you know what you are doing.
 Prefab Variable | Default Value | Description
 --- | --- | ---
 Random Item Chances | item_hlvr_clip_energygun=80, <br />item_hlvr_clip_energygun_multiple=20, <br />item_hlvr_clip_shotgun_multiple=100, <br />item_hlvr_clip_rapidfire=100, item_hlvr_grenade_frag=50, <br />item_hlvr_grenade_xen=50, <br />item_healthvial=100 | Comma separated string to assign chance (0 to 100) for randomized slots
